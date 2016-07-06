@@ -24,12 +24,43 @@ function handle(stream) {
     console.log(bufferLength);
     var dataArray = new Uint8Array(bufferLength);
 
-    function draw() {
+    function drawWaveform() {
+        drawVisual = requestAnimationFrame(drawWaveform);
+        analyser.getByteTimeDomainData(dataArray);
+        boardContext.fillStyle = 'rgb(200, 200, 200)';
+        boardContext.fillRect(0, 0, WIDTH, HEIGHT);
+        boardContext.lineWidth = 3;
+        boardContext.strokeStyle = 'rgb(0, 0, 0)';
+
+        boardContext.beginPath();
+      
+        var sliceWidth = WIDTH * 1.0 / bufferLength;
+        var x = 0;
+        for(var i = 0; i < bufferLength; i++) {
+   
+            var v = dataArray[i] / 128.0;
+            var y = v * HEIGHT/2;
+
+            if(i === 0) {
+                boardContext.moveTo(x, y);
+            } 
+            else {
+                boardContext.lineTo(x, y);
+            }
+
+            x += sliceWidth;
+        }
+
+        boardContext.lineTo(board.width, board.height/2);
+        boardContext.stroke();
+    };
+
+    function drawFrequency() {
         var barWidth = (WIDTH / bufferLength) * 2.5;
         var barHeight;
         var x = 0;
 
-        drawVisual = requestAnimationFrame(draw);
+        drawVisual = requestAnimationFrame(drawFrequency);
         analyser.getByteTimeDomainData(dataArray)
         boardContext.fillStyle = 'rgb(0, 0, 0)';
         boardContext.fillRect(0, 0, WIDTH, HEIGHT);
@@ -44,7 +75,7 @@ function handle(stream) {
         }
     };
 
-    draw();
+    drawWaveform();
 
     input.connect(analyser);
     input.connect(audio.destination);
