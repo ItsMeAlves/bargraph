@@ -61,7 +61,7 @@ function handle(stream) {
         var x = 0;
 
         drawVisual = requestAnimationFrame(drawFrequency);
-        analyser.getByteTimeDomainData(dataArray)
+        analyser.getByteFrequencyData(dataArray)
         boardContext.fillStyle = 'rgb(0, 0, 0)';
         boardContext.fillRect(0, 0, WIDTH, HEIGHT);
 
